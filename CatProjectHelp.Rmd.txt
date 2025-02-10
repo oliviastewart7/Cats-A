@@ -1,0 +1,91 @@
+---
+title: "CatProjectHelp"
+author: "P.Matheson"
+date: "9/19/18"
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+
+```{r, setup, include=FALSE}
+require(dplyr)
+require(mosaic)   # Load additional packages here 
+require(Amelia)
+
+# Some customization.  You can alter or delete as desired (if you know what you are doing).
+trellis.par.set(theme=theme.mosaic()) # change default color scheme for lattice
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+```{r}
+cats <- read.csv("http://pmatheson.people.amherst.edu/CatsSet.csv")
+
+```
+
+``` {r}
+
+#Get rid of pesky NA's in quantitative sets and replace with the average
+cats$Age[is.na(catsA$Age)] <- mean(catsA$Age,na.rm=T)
+cats$Weight..lbs.[is.na(catsA$Weight..lbs.)] <- mean(catsA$Weight..lbs.,na.rm=T)
+cats$pH[is.na(catsA$pH)] <- mean(catsA$pH,na.rm=T)
+cats$BG[is.na(catsA$BG)] <- mean(catsA$BG,na.rm=T)
+cats$iCa[is.na(catsA$iCa)] <- mean(catsA$iCa,na.rm=T)
+cats$K[is.na(catsA$K)] <- mean(catsA$K,na.rm=T)
+cats$Lac[is.na(catsA$Lac)] <- mean(catsA$Lac,na.rm=T)
+cats$BUN[is.na(catsA$BUN)] <- mean(catsA$BUN,na.rm=T)
+cats$Creat[is.na(catsA$Creat)] <- mean(catsA$Creat,na.rm=T)
+cats$TS[(catsA$TS)=="No bloodwork"] <- NA
+cats$PCV[(catsA$PCV)=="No bloodwork"] <- NA
+cats$TS[(catsA$TS)==""] <- NA
+cats$PCV[(catsA$PCV)==""] <- NA
+cats$PCV<-as.numeric(catsA$PCV)
+cats$TS<-as.numeric(catsA$TS)
+cats$PCV[is.na(catsA$PCV)] <- mean(catsA$PCV,na.rm=T)
+cats$TS[is.na(catsA$TS)] <- mean(catsA$TS,na.rm=T)
+cats$Temp[is.na(catsA$Temp)] <- mean(catsA$Temp,na.rm=T)
+cats$HR[is.na(catsA$HR)] <- mean(catsA$HR,na.rm=T)
+cats$Urine.protein[(catsA$Urine.protein)=="Not checked"] <- NA
+cats$Urine.protein<-as.numeric(catsA$Urine.protein)
+cats$Urine.protein[is.na(catsA$Urine.protein)] <- mean(catsA$Urine.protein,na.rm=T)
+cats$USG[(catsA$USG)=="Not checked"] <- NA
+cats$USG<-as.numeric(catsA$USG)
+cats$USG[is.na(catsA$USG)] <- mean(catsA$USG,na.rm=T)
+cats$Urine.pH[(catsA$Urine.protein)=="Not checked"] <- NA
+cats$Urine.pH<-as.numeric(catsA$Urine.pH)
+cats$Urine.pH[is.na(catsA$Urine.pH)] <- mean(catsA$Urine.pH,na.rm=T)
+
+cats$Diet[(catsA$Diet=="DRY")] <- "Dry"
+cats$Diet[(catsA$Diet=="Unknown")] <- "Dry"
+cats$Access.to.outdoors.[(catsA$Access.to.outdoors.=="Unknonw")] <- "No"
+cats$Access.to.outdoors.[(catsA$Access.to.outdoors.=="Unknown")] <- "No"
+cats$Stress[(catsA$Stress=="Unknown")] <- "No"
+cats$Previous.FLUTD.signs.[(catsA$Previous.FLUTD.signs.=="Unknown")] <- "Yes"
+cats$Vx.[(catsA$Vx.=="Unknown")] <- "Yes"
+cats$PMHx[(catsA$PMHx=="Unknown")] <- "No"
+
+cats$Size.of.u.cath[(catsA$Size.of.u.cath=="Slippery Sam")] <- 3.5
+cats$Flush.[(catsA$Flush.=="Unknown")] <- "Yes"
+cats$Bolus.[(catsA$bolus=="Unknown")] <- "Yes"
+cats$Severe.illness.[(catsA$Severe.illness.=="Undetermined")] <- "No"
+
+cats$Anemia.[(catsA$Anemia.=="Not checked")] <- "No"
+cats$Became.anemic.[(catsA$Became.anemic.=="Not rechecked")] <- "No"
+cats$Became.anemic.[(catsA$Became.anemic.=="No bloodwork")] <- "No"
+cats$Crystals[(catsA$Crystals=="Not checked")] <- "Yes"
+cats$Urine.WBC[(catsA$Urine.WBC=="Not checked")] <- NA
+cats$Urine.RBC[(catsA$Urine.RBC=="Not checked")] <- NA
+
+
+data2<-na.omit(cats) #work with this data - doesn't have any N/As
+
+```
