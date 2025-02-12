@@ -85,6 +85,44 @@ cats$Urine.RBC[(cats$Urine.RBC=="Not checked")] <- NA
 
 
 data2<-na.omit(cats) #work with this data - doesn't have any N/As
+```
 
+```{r}
+CatDatasetCreat <- cats %>%
+  mutate(Ket = ifelse(Ketamine== "Yes", 1, 0)) %>%
+  mutate(Val = ifelse(Valium=="Yes", 1, 0)) %>%
+  mutate(Opi = ifelse(Opioid== "Yes", 1, 0)) %>%
+  mutate(Dex = ifelse(Dexmedetomidine=="Yes", 1, 0)) %>%
+  mutate(Iso = ifelse(Isoflurane=="Yes", 1, 0)) %>%
+  mutate(Prop = ifelse(Propofol=="Yes", 1, 0)) %>%
+  rename(RepeatUO="Repeat.UO.")%>%
+  rename(Survival30="Survival.30.day")%>%
+  rename(FLUTD="Previous.FLUTD.signs.")%>%
+  rename(HospUO="Re.UO.in.hosp")%>%
+  rename(PrevUO="Previous.UO")%>%
+  rename(Flush="Flush.")%>%
+  rename(Bolus="Bolus.")%>%
+  rename(hrsCath="Hrs.of.cath")%>%
+  rename(cathSize="Size.of.u.cath")%>%
+  filter(!is.na(cathSize)) %>%
+  filter(!is.na(  hrsCath)) %>%
+  filter(!is.na( RepeatUO)) %>%
+  filter(!is.na( Survival30)) %>%
+  filter(!is.na( FLUTD)) %>%
+  filter(!is.na( PrevUO)) %>%
+  filter(!is.na( Flush)) %>%
+  filter(!is.na(Bolus)) %>%
+  filter(!is.na( HospUO )) %>%
+  select(cathSize,  hrsCath, RepeatUO, Survival30, FLUTD, PrevUO, Flush, Bolus, HospUO ,Ket, Val, Opi, Dex, Iso, Prop)
+CatDatasetCreat$RepeatUO <- ifelse(CatDatasetCreat$RepeatUO == "Yes", 1, ifelse(CatDatasetCreat$RepeatUO == "No", 0,2))
+CatDatasetCreat$Survival30 <- ifelse(CatDatasetCreat$Survival30 == "Yes", 1, ifelse(CatDatasetCreat$Survival30 == "No", 0,2))
+CatDatasetCreat$FLUTD <- ifelse(CatDatasetCreat$FLUTD == "Yes", 1, ifelse(CatDatasetCreat$FLUTD == "No", 0,2))
+CatDatasetCreat$PrevUO <- ifelse(CatDatasetCreat$PrevUO == "Yes", 1, ifelse(CatDatasetCreat$PrevUO == "No", 0,2))
+CatDatasetCreat$HospUO <- ifelse(CatDatasetCreat$HospUO == "Yes", 1, ifelse(CatDatasetCreat$HospUO == "No", 0,2))
+CatDatasetCreat$Flush <- ifelse(CatDatasetCreat$Flush == "Yes", 1, ifelse(CatDatasetCreat$Flush == "No", 0,2))
+CatDatasetCreat$cathSize <- ifelse(CatDatasetCreat$cathSize == "Slippery sam", "3.5", ifelse(CatDatasetCreat$cathSize == "3.5", "3.5", 5))
+CatDatasetCreat$Bolus <- ifelse(CatDatasetCreat$Bolus== "Yes", 1, ifelse(CatDatasetCreat$Bolus == "No", 0,2))
+CatDatasetCreat$cathSize<- as.factor(CatDatasetCreat$cathSize)
+CatDatasetCreat
 ```
 
