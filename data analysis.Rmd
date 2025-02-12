@@ -126,3 +126,11 @@ CatDatasetCreat$cathSize<- as.factor(CatDatasetCreat$cathSize)
 CatDatasetCreat
 ```
 
+```{r}
+cat_data <- cats %>%
+  select(Age, Weight..lbs., Breed, Diet, ER.Drugs., Difficulty, Time..min., Size.of.u.cath, Other.cath, Prescription.diet., Medications.after.dsg, Ketamine, Opioid, Isoflurane, Valium, Dexmedetomidine, Propofol, Water.Change, Environment.Change, Litter.Change, Signs.at.home, Repeat.UO.)  
+```
+
+
+
+
