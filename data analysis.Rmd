@@ -85,6 +85,7 @@ cats$Urine.RBC[(cats$Urine.RBC=="Not checked")] <- NA
 
 
 data2<-na.omit(cats) #work with this data - doesn't have any N/As
+
 ```
 
 ```{r}
@@ -128,7 +129,9 @@ CatDatasetCreat
 
 ```{r}
 cat_data <- cats %>%
-  select(Age, Weight..lbs., Breed, Diet, ER.Drugs., Difficulty, Time..min., Size.of.u.cath, Other.cath, Prescription.diet., Medications.after.dsg, Ketamine, Opioid, Isoflurane, Valium, Dexmedetomidine, Propofol, Water.Change, Environment.Change, Litter.Change, Signs.at.home, Repeat.UO.)  
+  select(Age, Weight..lbs., Breed, Diet, ER.Drugs., Difficulty, Time..min., Size.of.u.cath, Other.cath, Prescription.diet., Medications.after.dsg, Ketamine, Opioid, Isoflurane, Valium, Dexmedetomidine, Propofol, Water.Change, Environment.Change, Litter.Change, Signs.at.home, Repeat.UO., Survival.30.day)
+
+
 ```
 
 
