@@ -212,7 +212,7 @@ ggplot(cat_data_prescription , aes(x = Prescription.diet., fill = factor(Repeat.
 ```
 
 ```{r}
-# Urine Symptoms
+# Reshape data into long format for better visualization
 cat_data_urine_symptoms <- cats %>%
   select(Repeat.UO., Strainguria, Hematuria, Lethargy, Pollakiuria) %>%
   pivot_longer(cols = -Repeat.UO., names_to = "Symptom", values_to = "Presence") %>%
@@ -221,7 +221,7 @@ cat_data_urine_symptoms <- cats %>%
 # Stacked bar chart showing proportion of cats with symptoms by Return UO status
 ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   geom_bar(position = "fill") +
-  facet_wrap(~Repeat.UO.) + 
+  facet_wrap(~Repeat.UO.) +  # Separate panels for Repeat UO Yes/No
   labs(
     title = "Urinary Symptoms and Return UO",
     x = "Urinary Symptoms",
