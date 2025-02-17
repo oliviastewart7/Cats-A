@@ -21,6 +21,7 @@ require(mosaic)   # Load additional packages here
 require(Amelia)
 library(ggplot2)
 library(tidyr)
+library(kableExtra)
 
 # Some customization.  You can alter or delete as desired (if you know what you are doing).
 trellis.par.set(theme=theme.mosaic()) # change default color scheme for lattice
@@ -239,6 +240,7 @@ ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
 catdatachange <- cat_data %>%
   select(Water.Change, Environment.Change, Litter.Change, Repeat.UO.) %>%
   pivot_longer(cols = -Repeat.UO., names_to = "Change", values_to = "Presence") %>%
+  filter(Presence %in% c("Yes", "No"))%>%
   na.omit()
 
 # Stacked bar chart showing proportion of cats with change by Return UO status
@@ -247,19 +249,97 @@ ggplot(catdatachange, aes(x = Change, fill = factor(Presence))) +
   facet_wrap(~Repeat.UO.) +  
   labs(
     title = "At Home Changes and Return UO",
-    x = "Changes",
-    y = "Proportion",
+    x = "Types of Changes",
+    y = "Proportion of Repeat Urinary Infection in Cats",
     fill = "Change Present"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_fill_manual(
     values = c("No" = "black", " NO" = "black", "no" = "black", "Yes" = "grey"), 
-    labels = c("No" = "No", " NO" = "No", "no" = "No", "Yes" = "Yes")
+    labels = c("No" = "No", " No " = "No", "No  " = "No", "Yes" = "Yes")
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 ```
 
+
+
+```{r}
+catsignsathome <- cats %>%
+  select(Signs.at.home) %>%
+  filter(Signs.at.home %in% c("Yes", "No"))%>%
+  na.omit() 
+signs_counts <- catsignsathome %>%
+  group_by(Signs.at.home) %>%
+  tally() %>%
+  mutate(percentage = n / sum(n) * 100)
+
+ggplot(signs_counts, aes(x = "", y = n, fill = Signs.at.home)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +  # Converts the bar chart into a pie chart
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            position = position_stack(vjust = 0.5)) +  # Add percentage labels
+  labs(
+    title = "Distribution of Cats Who Received Had One Change At Home",
+    fill = "Change Present"
+  ) +
+  scale_fill_manual(
+    values = c("No" = "red", "Yes" = "purple"), 
+    labels = c("No" = "No", "Yes" = "Yes")
+  ) +
+  theme_minimal() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+
+catsignstouo <- cats %>%
+  select(Signs.at.home, Repeat.UO.) %>%
+  filter(Signs.at.home %in% c("Yes", "No"))%>%
+  na.omit()
+
+# Visualize the relationship between Prescription Diet and Repeat UO
+ggplot(catsignstouo , aes(x = Signs.at.home, fill = factor(Repeat.UO.))) +
+  geom_bar(position = "fill") +  
+  labs(
+    title = "Changes At Home vs. Repeat UO",
+    x = "Changes At Home",
+    y = "Proportion",
+    fill = "Repeat UO"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) + 
+  theme_minimal()
+```
+
+
+
+```{r}
+catsrepeatproblems <- cat_data %>%
+  mutate(Any_Yes = if_else(Repeat.UO. == "Yes" | Survival.30.day == "No" | Readmit. == "Yes", "Yes", "No"))
+
+# Create frequency table
+anyproblems <- catsrepeatproblems %>%
+  group_by(Any_Yes) %>%
+  summarise(Frequency = n())%>%
+  na.omit()
+
+# Plot frequency table as a bar chart
+ggplot(anyproblems, aes(x = Any_Yes, y = Frequency, fill = Any_Yes)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Any Issues After Procedure",
+       x = "Problem Present",
+       y = "Frequency") +
+  theme_minimal()
+
+freq_table <- catsrepeatproblems %>%
+  count(Any_Yes) %>%
+  mutate(Percentage = round(n / sum(n) * 100, 1))
+
+# Display the table
+kable(freq_table, col.names = c("Category", "Count", "Percentage (%)"))
+```
+
+
+```{r}
+
+```
 
 
 ```{r}
