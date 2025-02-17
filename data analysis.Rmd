@@ -175,7 +175,7 @@ As shown by the graph, we can see that if the cats are more likely to develop an
 
 We also wanted to examine how types of change in the home affected the cat in terms of problems afterwards. We defined problems as whether the cat had one of three variables present - Did Not Survive 30 Days, Readmitted into Hospital, or Had a Repeat Urinary Tract Infection. Based on the charts below we can see that when cats do have one of these problems present around 35% of the time there is usually a change in the litter of cat.  
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.align = 'center'}
 catsrepeatproblems <- cat_data %>%
   mutate(Any_Yes = if_else(Repeat.UO. == "Yes" | Survival.30.day == "No" | Readmit. == "Yes", "Yes", "No"))
 
@@ -185,7 +185,11 @@ cat_data_yes <- catsrepeatproblems %>%
   select(Environment.Change, Litter.Change, Water.Change) %>%
   pivot_longer(cols = everything(), names_to = "Change_Type", values_to = "Change_Present") %>%
   filter(Change_Present %in% c("Yes", "No"))%>%
-  na.omit()
+  na.omit()%>%
+  mutate(Change_Type = recode(Change_Type, 
+                              "Environment.Change" = "Environmental Change", 
+                              "Litter.Change" = "Litter Change", 
+                              "Water.Change" = "Water Change"))
 
 # Create a bar chart for distribution of changes at home when Any_Yes is "Yes"
 ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
