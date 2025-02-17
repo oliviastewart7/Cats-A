@@ -251,7 +251,7 @@ ggplot(catdatachange, aes(x = Change, fill = factor(Presence))) +
     title = "At Home Changes and Return UO",
     x = "Types of Changes",
     y = "Proportion of Repeat Urinary Infection in Cats",
-    fill = "Change Present"
+    fill = "Repeat UO"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_fill_manual(
@@ -343,5 +343,24 @@ kable(freq_table, col.names = c("Category", "Count", "Percentage (%)"))
 
 
 ```{r}
+# Filter data to include only cases where Any_Yes is "Yes"
+cat_data_yes <- catsrepeatproblems %>%
+  filter(Any_Yes == "Yes") %>%
+  select(Environment.Change, Litter.Change, Water.Change) %>%
+  pivot_longer(cols = everything(), names_to = "Change_Type", values_to = "Change_Present") %>%
+  filter(Change_Present %in% c("Yes", "No"))%>%
+  na.omit()
 
+# Create a bar chart for distribution of changes at home when Any_Yes is "Yes"
+ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
+  geom_bar(position = "fill") +  # Normalize bars to show proportions
+  labs(
+    title = "Distribution of Changes at Home When Problems are Present",
+    x = "Type of Change at Home",
+    y = "Proportion",
+    fill = "Change Present"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +  # Show percentage
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
