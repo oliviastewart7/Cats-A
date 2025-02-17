@@ -19,6 +19,9 @@ output:
 require(dplyr)
 require(mosaic)   # Load additional packages here 
 require(Amelia)
+library(ggplot2)
+library(tidyr)
+library(kableExtra)
 
 # Some customization.  You can alter or delete as desired (if you know what you are doing).
 trellis.par.set(theme=theme.mosaic()) # change default color scheme for lattice
@@ -27,11 +30,11 @@ knitr::opts_chunk$set(
   size="small")   # slightly smaller font for code
 ```
 
-```{r}
+```{r include=FALSE}
 cats <- read.csv("http://pmatheson.people.amherst.edu/CatsSet.csv")
 ```
 
-``` {r}
+``` {r include=FALSE}
 #Get rid of pesky NA's in quantitative sets and replace with the average
 cats$Age[is.na(cats$Age)] <- mean(cats$Age,na.rm=T)
 cats$Weight..lbs.[is.na(cats$Weight..lbs.)] <- mean(cats$Weight..lbs.,na.rm=T)
@@ -88,7 +91,7 @@ data2<-na.omit(cats) #work with this data - doesn't have any N/As
 
 ```
 
-```{r}
+```{r include = FALSE}
 CatDatasetCreat <- cats %>%
   mutate(Ket = ifelse(Ketamine== "Yes", 1, 0)) %>%
   mutate(Val = ifelse(Valium=="Yes", 1, 0)) %>%
@@ -127,13 +130,74 @@ CatDatasetCreat$cathSize<- as.factor(CatDatasetCreat$cathSize)
 CatDatasetCreat
 ```
 
-```{r}
+```{r echo=FALSE}
 cat_data <- cats %>%
-  select(Age, Weight..lbs., Breed, Diet, ER.Drugs., Difficulty, Time..min., Size.of.u.cath, Other.cath, Prescription.diet., Medications.after.dsg, Ketamine, Opioid, Isoflurane, Valium, Dexmedetomidine, Propofol, Water.Change, Environment.Change, Litter.Change, Signs.at.home, Repeat.UO., Survival.30.day)
+  select(Age, Weight..lbs., Breed, Diet, ER.Drugs., Difficulty, Time..min., Size.of.u.cath, Other.cath, Prescription.diet., Medications.after.dsg, Ketamine, Opioid, Isoflurane, Valium, Dexmedetomidine, Propofol, Water.Change, Environment.Change, Litter.Change, Signs.at.home, Repeat.UO., Survival.30.day, Readmit.)
 
 
 ```
 
+### Overview
+  For examining urinary tract infection in cats we used a dataset of 105 male cats with different variables from measurements taken at the doctors office and input from the owners of the cats based on their home life. We wanted to look at if there were any changes doctors could make in terms of care for the cats as well as how the home of these cats can affect their health. 
+
+### Analysis
+First we wanted to look at vet care of cats and more importantly how prescription diets affected the cats frequency of getting a Urinary Tract infections after the surgery. 
+
+### Insert Graphs
 
 
+Next we wanted to look at whether the presence of symptoms such as Hematuria, Lethargy, Pollakiura, Strainguria correlated to whether or not cats have a repeat Urinary Tract Infection. [EXPLAIN DIFFERENT SYMPTOMS AND WHAT THEY ARE]
+
+```{r echo=FALSE}
+# Reshape data into long format for better visualization
+cat_data_urine_symptoms <- cats %>%
+  select(Repeat.UO., Strainguria, Hematuria, Lethargy, Pollakiuria) %>%
+  pivot_longer(cols = -Repeat.UO., names_to = "Symptom", values_to = "Presence") %>%
+  na.omit()
+
+# Stacked bar chart showing proportion of cats with symptoms by Return UO status
+ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
+  geom_bar(position = "fill") +
+  facet_wrap(~Repeat.UO.) +  # Separate panels for Repeat UO Yes/No
+  labs(
+    title = "Urinary Symptoms and Return UO",
+    x = "Urinary Symptoms",
+    y = "Proportion",
+    fill = "Symptom Present"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+As shown by the graph, we can see that if the cats are more likely to develop another urinary tract infection if they are experiencing strainguria (difficulty urinating), hematuria (blood in urine), or lethargy(lack of energy) based on the proportions shown above. We also see that there is no need to be alarmed if the cat has pollakiuria (frequently urinating) because this may be because of an aftermath of the surgery and may have no impact on the future possibility of a UO on the cat because the same proportion of cats with and without the Repeat UO have the symptom of Pollakiuria present.
+
+
+We also wanted to examine how types of change in the home affected the cat in terms of problems afterwards. We defined problems as whether the cat had one of three variables present - Did Not Survive 30 Days, Readmitted into Hospital, or Had a Repeat Urinary Tract Infection. Based on the charts below we can see that when cats do have one of these problems present around 35% of the time there is usually a change in the litter of cat.  
+
+```{r echo=FALSE}
+catsrepeatproblems <- cat_data %>%
+  mutate(Any_Yes = if_else(Repeat.UO. == "Yes" | Survival.30.day == "No" | Readmit. == "Yes", "Yes", "No"))
+
+# Filter data to include only cases where Any_Yes is "Yes"
+cat_data_yes <- catsrepeatproblems %>%
+  filter(Any_Yes == "Yes") %>%
+  select(Environment.Change, Litter.Change, Water.Change) %>%
+  pivot_longer(cols = everything(), names_to = "Change_Type", values_to = "Change_Present") %>%
+  filter(Change_Present %in% c("Yes", "No"))%>%
+  na.omit()
+
+# Create a bar chart for distribution of changes at home when Any_Yes is "Yes"
+ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
+  geom_bar(position = "fill") +  # Normalize bars to show proportions
+  labs(
+    title = "Distribution of Changes at Home When Problems are Present",
+    x = "Type of Change at Home",
+    y = "Proportion",
+    fill = "Change Present"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +  # Show percentage
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
