@@ -233,3 +233,35 @@ ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+
+
+```{r echo=FALSE}
+catdatachange <- cat_data %>%
+  select(Water.Change, Environment.Change, Litter.Change, Repeat.UO.) %>%
+  pivot_longer(cols = -Repeat.UO., names_to = "Change", values_to = "Presence") %>%
+  na.omit()
+
+# Stacked bar chart showing proportion of cats with change by Return UO status
+ggplot(catdatachange, aes(x = Change, fill = factor(Presence))) +
+  geom_bar(position = "fill") +
+  facet_wrap(~Repeat.UO.) +  
+  labs(
+    title = "At Home Changes and Return UO",
+    x = "Changes",
+    y = "Proportion",
+    fill = "Change Present"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(
+    values = c("No" = "black", " NO" = "black", "no" = "black", "Yes" = "grey"), 
+    labels = c("No" = "No", " NO" = "No", "no" = "No", "Yes" = "Yes")
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+
+
+```{r}
+
+```
