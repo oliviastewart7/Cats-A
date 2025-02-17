@@ -219,7 +219,6 @@ cat_data_urine_symptoms <- cats %>%
   pivot_longer(cols = -Repeat.UO., names_to = "Symptom", values_to = "Presence") %>%
   na.omit()
 
-# Stacked bar chart showing proportion of cats with symptoms by Return UO status
 ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   geom_bar(position = "fill") +
   facet_wrap(~Repeat.UO.) +  # Separate panels for Repeat UO Yes/No
@@ -234,6 +233,26 @@ ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+```{r}
+cat_data_size <- cats %>%
+  select(Repeat.UO., Size.of.u.cath) %>%
+  pivot_longer(cols = -Repeat.UO., names_to = "Symptom", values_to = "Presence") %>%
+  na.omit()
+
+# Stacked bar chart showing proportion of cats with symptoms by Return UO status
+ggplot(cat_data_size, aes(x = Symptom, fill = factor(Presence))) +
+  geom_bar(position = "fill") +
+  facet_wrap(~Repeat.UO.) +  # Separate panels for Repeat UO Yes/No
+  labs(
+    title = "Urinary Symptoms and Return UO",
+    x = "Urinary Symptoms",
+    y = "Proportion",
+    fill = "Symptom Present"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
 
 ```{r echo=FALSE}
