@@ -260,12 +260,16 @@ catdatachange <- cat_data %>%
   select(Water.Change, Environment.Change, Litter.Change, Repeat.UO.) %>%
   pivot_longer(cols = -Repeat.UO., names_to = "Change", values_to = "Presence") %>%
   filter(Presence %in% c("Yes", "No"))%>%
-  na.omit()
+  na.omit()%>%
+  mutate(Change = recode(Change, 
+                              "Environment.Change" = "Environmental Change", 
+                              "Litter.Change" = "Litter Change", 
+                              "Water.Change" = "Water Change"))
 
 # Stacked bar chart showing proportion of cats with change by Return UO status
 ggplot(catdatachange, aes(x = Change, fill = factor(Presence))) +
   geom_bar(position = "fill") +
-  facet_wrap(~Repeat.UO.) +  
+  facet_wrap(~Repeat.UO., labeller = labeller(Repeat.UO. = c("No" = "Change Not Present", "Yes" = "Change Present"))) +  
   labs(
     title = "At Home Changes and Return UO",
     x = "Types of Changes",
@@ -274,7 +278,7 @@ ggplot(catdatachange, aes(x = Change, fill = factor(Presence))) +
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_fill_manual(
-    values = c("No" = "black", " NO" = "black", "no" = "black", "Yes" = "grey"), 
+    values = c("No" = "blue", " NO" = "blue", "no" = "blue", "Yes" = "red"), 
     labels = c("No" = "No", " No " = "No", "No  " = "No", "Yes" = "Yes")
   ) +
   theme_minimal() +

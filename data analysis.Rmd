@@ -138,17 +138,54 @@ cat_data <- cats %>%
 ```
 
 ### Overview
-  For examining urinary tract infection in cats we used a dataset of 105 male cats with different variables from measurements taken at the doctors office and input from the owners of the cats based on their home life. We wanted to look at if there were any changes doctors could make in terms of care for the cats as well as how the home of these cats can affect their health. 
+  Our dataset focuses on cats diagnosed with urinary tract disease, specifically those that have experienced urinary obstructions (UO) requiring hospitalization. While these cats receive treatment, some are returning to the hospital post-procedure, and the underlying reasons for these repeat visits remain unclear. For examining urinary tract infection in cats we used a dataset of 105 male cats with different variables from measurements taken at the doctors office and input from the owners of the cats based on their home life. We wanted to look at if there were any changes doctors could make in terms of care for the cats as well as how the home life of these cats can affect their health. 
+
+### Variables of Interest
+After testing the data set and examining possible variables we settled on the relevant variables: Diet, Prescription Diet, Water Change, Environment Change, and Litter Change along with symptoms variables such as Hematuria, Lethargy, Polakiuria, Strainguria. All these variables were used to describe why outcomes such as variables like Repeat Urinary Tract Infection, Readmittance into the Hospital, and the Survival of Cats after 30 days occur. 
 
 ### Analysis
-First we wanted to look at vet care of cats and more importantly how prescription diets affected the cats frequency of getting a Urinary Tract infections after the surgery. 
+  First we wanted to look at vet care of cats and more importantly how diets and prescription diets affected the cats frequency of getting a Urinary Tract infections after the surgery. As show by the charts it appear that cats are less likely to get urinary tract infections when consuming both dry and wet foods. In terms of prescription diets it appears that even though there are any cat getting repeat urinary tract infection that don't have a prescription diet, many cats that get the surgery are precribed to go on this diet and  
 
-### Insert Graphs
+```{r echo=FALSE, fig.align='center'}
+# filter out NAs
+cat_data_diet <- cats %>%
+  select(Diet, Repeat.UO.) %>%
+  filter(!is.na(Diet), !is.na(Repeat.UO.))
+
+# Visualize the distribution of RepeatUO by Diet
+ggplot(cat_data_diet, aes(x = Diet, fill = factor(Repeat.UO.))) +
+  geom_bar(position = "fill") + 
+  labs(
+    title = "Diet vs. Repeat UO",
+    x = "Diet",
+    y = "Proportion",
+    fill = "Repeat UO"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_minimal()
+
+# filter out NAs
+cat_data_prescription <- cats %>%
+  select(Prescription.diet., Repeat.UO.) %>%
+  filter(!is.na(Prescription.diet.), !is.na(Repeat.UO.))
+
+# Visualize the relationship between Prescription Diet and Repeat UO
+ggplot(cat_data_prescription , aes(x = Prescription.diet., fill = factor(Repeat.UO.))) +
+  geom_bar(position = "fill") +  
+  labs(
+    title = "Prescription Diet vs. Repeat UO",
+    x = "Prescription Diet",
+    y = "Proportion",
+    fill = "Repeat UO"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) + 
+  theme_minimal()
+```
 
 
 Next we wanted to look at whether the presence of symptoms such as Hematuria, Lethargy, Pollakiura, Strainguria correlated to whether or not cats have a repeat Urinary Tract Infection. [EXPLAIN DIFFERENT SYMPTOMS AND WHAT THEY ARE]
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.align='center'}
 # Reshape data into long format for better visualization
 cat_data_urine_symptoms <- cats %>%
   select(Repeat.UO., Strainguria, Hematuria, Lethargy, Pollakiuria) %>%
