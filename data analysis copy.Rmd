@@ -280,6 +280,7 @@ ggplot(catdatachange, aes(x = Change, fill = factor(Presence))) +
     fill = "Repeat UO"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = c("black", "lightgrey")) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 ```
