@@ -195,12 +195,12 @@ cat_data_urine_symptoms <- cats %>%
 # Stacked bar chart showing proportion of cats with symptoms by Return UO status
 ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   geom_bar(position = "fill") +
-  facet_wrap(~Repeat.UO.) +  # Separate panels for Repeat UO Yes/No
+  facet_wrap(~Repeat.UO., labeller = labeller(Repeat.UO. = c("No" = "Symptom Not Present", "Yes" = "Symptom Present"))) +  # Separate panels for Repeat UO Yes/No
   labs(
     title = "Urinary Symptoms and Repeat UO",
     x = "Urinary Symptoms",
-    y = "Proportion",
-    fill = "Symptom Present"
+    y = "Proportion of Repeat UO's",
+    fill = "Repeat UO"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
   theme_minimal() +
