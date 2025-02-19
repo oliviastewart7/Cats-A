@@ -164,12 +164,13 @@ cat_data_diet <- cats %>%
 ggplot(cat_data_diet, aes(x = Diet, fill = factor(Repeat.UO.))) +
   geom_bar(position = "fill") + 
   labs(
-    title = "Diet vs. Repeat UO",
+    title = "Relationship Between Diet and Repeat UO",
     x = "Diet",
     y = "Proportion",
     fill = "Repeat UO"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = c("black", "lightgrey")) +  # Adjust colors as needed
   theme_minimal()
 ```
 
@@ -203,12 +204,13 @@ cat_data_prescription <- cats %>%
 ggplot(cat_data_prescription , aes(x = Prescription.diet., fill = factor(Repeat.UO.))) +
   geom_bar(position = "fill") +  
   labs(
-    title = "Prescription Diet vs. Repeat UO",
+    title = "Relationship Between Prescription Diet and Repeat UO",
     x = "Prescription Diet",
     y = "Proportion",
     fill = "Repeat UO"
   ) +
   scale_y_continuous(labels = scales::percent_format()) + 
+  scale_fill_manual(values = c("black", "lightgrey")) +  # Adjust colors as needed
   theme_minimal()
 ```
 
@@ -229,6 +231,7 @@ ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
     fill = "Symptom Present"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = c("black", "lightgrey")) +  # Adjust colors as needed
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -383,7 +386,8 @@ ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
     y = "Proportion",
     fill = "Change Present"
   ) +
-  scale_y_continuous(labels = scales::percent_format()) +  # Show percentage
+  scale_y_continuous(labels = scales::percent_format()) + 
+    scale_fill_manual(values = c("black", "lightgrey")) +# Show percentage
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
