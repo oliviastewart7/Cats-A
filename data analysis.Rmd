@@ -197,7 +197,7 @@ ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   geom_bar(position = "fill") +
   facet_wrap(~Repeat.UO.) +  # Separate panels for Repeat UO Yes/No
   labs(
-    title = "Urinary Symptoms and Return UO",
+    title = "Urinary Symptoms and Repeat UO",
     x = "Urinary Symptoms",
     y = "Proportion",
     fill = "Symptom Present"
@@ -232,10 +232,10 @@ cat_data_yes <- catsrepeatproblems %>%
 ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
   geom_bar(position = "fill") +  # Normalize bars to show proportions
   labs(
-    title = "Distribution of Changes at Home When Problems are Present",
+    title = "Changes at Home vs. Problems are Present",
     x = "Type of Change at Home",
-    y = "Proportion",
-    fill = "Change Present"
+    y = "Proportion of Cats Where Home Problem Present",
+    fill = "Problem Present"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +  # Show percentage
   theme_minimal() +
