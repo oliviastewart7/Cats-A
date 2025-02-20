@@ -1,6 +1,7 @@
 ---
-title: "Cat Project Analysis"
-author: "Group-A: Josh and Olivia"
+title: "Keeping Cats Out of the Hospital: Insights for Veterinary Management 
+"
+author: "Josh Burke and Olivia Stewart"
 date: "2/19/25"
 output:
   pdf_document:
@@ -22,6 +23,8 @@ require(Amelia)
 library(ggplot2)
 library(tidyr)
 library(kableExtra)
+library(gridExtra)
+library(grid)
 
 # Some customization.  You can alter or delete as desired (if you know what you are doing).
 trellis.par.set(theme=theme.mosaic()) # change default color scheme for lattice
@@ -144,16 +147,16 @@ cat_data <- cats %>%
 After testing the data set and examining possible variables we settled on the relevant variables: Diet, Prescription Diet, Water Change, Environment Change, and Litter Change along with symptoms variables such as Hematuria, Lethargy, Polakiuria, Strainguria. All these variables were used to describe why outcomes such as variables like Repeat Urinary Tract Infection, Readmittance into the Hospital, and the Survival of Cats after 30 days occur. 
 
 ### Analysis
-  First we wanted to look at vet care of cats and more importantly how diets and prescription diets affected the cats frequency of getting a Urinary Tract infections after the surgery. As show by the charts it appear that cats are less likely to get urinary tract infections when consuming both dry and wet foods. In terms of prescription diets it appears that even though there are any cat getting repeat urinary tract infection that don't have a prescription diet, many cats that get the surgery are precribed to go on this diet and  
+  First we wanted to look at care of cats in terms of their diets. More importantly how diets and prescription diets affected the cats frequency of getting a Urinary obstructions after the surgery. As show by the stacked bar chart in **Figure 1** it appear that cats are less likely to get urinary tract infections when consuming both dry and wet foods. When evaluating prescription diets, cats get prescribed diets around 82% of the time and among those 82% around 13% of those got a repeat urinary obstruction while there were no cats in thid data set who had a repet obstruction. when they were not prescribed a diet. The results in **Figure 2** show that cats on a prescription diet still experience repeat UOs, and possibly at a higher proportion than those not on a prescription diet. This suggests that a prescription diet alone may not be enough to prevent recurrence, or that high-risk cats are more likely to be prescribed it in the first place.
 
-```{r echo=FALSE, fig.align='center'}
-# filter out NAs
+```{r echo=FALSE, fig.align='center', fig.width=8, fig.height=2}
+# Filter out NAs for Diet vs Repeat UO
 cat_data_diet <- cats %>%
   select(Diet, Repeat.UO.) %>%
   filter(!is.na(Diet), !is.na(Repeat.UO.))
 
-# Visualize the distribution of RepeatUO by Diet
-ggplot(cat_data_diet, aes(x = Diet, fill = factor(Repeat.UO.))) +
+# Create first plot
+plot1 <- ggplot(cat_data_diet, aes(x = Diet, fill = factor(Repeat.UO.))) +
   geom_bar(position = "fill") + 
   labs(
     title = "Diet vs. Repeat UO",
@@ -164,13 +167,13 @@ ggplot(cat_data_diet, aes(x = Diet, fill = factor(Repeat.UO.))) +
   scale_y_continuous(labels = scales::percent_format()) +
   theme_minimal()
 
-# filter out NAs
+# Filter out NAs for Prescription Diet vs Repeat UO
 cat_data_prescription <- cats %>%
   select(Prescription.diet., Repeat.UO.) %>%
   filter(!is.na(Prescription.diet.), !is.na(Repeat.UO.))
 
-# Visualize the relationship between Prescription Diet and Repeat UO
-ggplot(cat_data_prescription , aes(x = Prescription.diet., fill = factor(Repeat.UO.))) +
+# Create second plot
+plot2 <- ggplot(cat_data_prescription, aes(x = Prescription.diet., fill = factor(Repeat.UO.))) +
   geom_bar(position = "fill") +  
   labs(
     title = "Prescription Diet vs. Repeat UO",
@@ -180,10 +183,14 @@ ggplot(cat_data_prescription , aes(x = Prescription.diet., fill = factor(Repeat.
   ) +
   scale_y_continuous(labels = scales::percent_format()) + 
   theme_minimal()
+
+# Arrange the plots side by side
+grid.arrange(plot1, plot2, ncol = 2, top = textGrob("Figure 1                                                                  Figure 2", 
+                            gp = gpar(fontsize = 12, fontface = "italic")))
 ```
 
 
-Next we wanted to look at whether the presence of symptoms such as Hematuria, Lethargy, Pollakiura, Strainguria correlated to whether or not cats have a repeat Urinary Tract Infection. [EXPLAIN DIFFERENT SYMPTOMS AND WHAT THEY ARE]
+Next we wanted to look at whether the presence of symptoms such as Hematuria, Lethargy, Pollakiura, Strainguria correlated to whether or not cats have a repeat Urinary obstruction. These are the four symptoms that we felt an owner can look for at home. In this context, Hematuria is blood in the urine, Lethargy is a lack of energy from the cat, Pollakiuria is frequent urination, and Strainguria is difficulty while urinating. **Figure 3** shows more cats with repeat UO had urinary symptoms compared to those without a repeat UO. Cats experience symptoms such as Hematuria, Lethargy, and Stranguria almost double when they had a repeat UO. It appears that there is no effect on repeat UOs for Pollakiuria because the proportion of repeat urinary obstructions is the same whether the symptoms is present or not. 
 
 ```{r echo=FALSE, fig.align='center'}
 # Reshape data into long format for better visualization
@@ -193,7 +200,7 @@ cat_data_urine_symptoms <- cats %>%
   na.omit()
 
 # Stacked bar chart showing proportion of cats with symptoms by Return UO status
-ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
+plot3 <- ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   geom_bar(position = "fill") +
   facet_wrap(~Repeat.UO., labeller = labeller(Repeat.UO. = c("No" = "Symptom Not Present", "Yes" = "Symptom Present"))) +  # Separate panels for Repeat UO Yes/No
   labs(
@@ -205,16 +212,29 @@ ggplot(cat_data_urine_symptoms, aes(x = Symptom, fill = factor(Presence))) +
   scale_y_continuous(labels = scales::percent_format()) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# Arrange the plots side by side
+grid.arrange(plot3, ncol = 1, top = textGrob("Figure 3", 
+                            gp = gpar(fontsize = 12, fontface = "italic")))
 ```
 
-As shown by the graph, we can see that if the cats are more likely to develop another urinary tract infection if they are experiencing strainguria (difficulty urinating), hematuria (blood in urine), or lethargy(lack of energy) based on the proportions shown above. We also see that there is no need to be alarmed if the cat has pollakiuria (frequently urinating) because this may be because of an aftermath of the surgery and may have no impact on the future possibility of a UO on the cat because the same proportion of cats with and without the Repeat UO have the symptom of Pollakiuria present.
 
+Finally, we wanted to examine how types of changes in the home affected the cat in terms of problems afterwards. We defined problems as whether the cat had one of three outcomes present - Did Not Survive 30 Days, Readmitted into Hospital, or Had a Repeat Urinary Obstruction. These are 3 signs to show that the cats health was negatively impacted after the surgery. We decided to define this variable in this manner because with such a small dataset the amount of cats that solely had a repeat UO was only 9. **Figure 4** shows that when we change our data to look at the problem variable rather than just the repeat obstructions that we get more Yes outcomes than 9. This allows us to get a clearer picture of health for the cats. 
 
-We also wanted to examine how types of change in the home affected the cat in terms of problems afterwards. We defined problems as whether the cat had one of three variables present - Did Not Survive 30 Days, Readmitted into Hospital, or Had a Repeat Urinary Tract Infection. Based on the charts below we can see that when cats do have one of these problems present around 35% of the time there is usually a change in the litter of cat.  
-
-```{r echo=FALSE, fig.align = 'center'}
+```{r echo=FALSE}
 catsrepeatproblems <- cat_data %>%
   mutate(Any_Yes = if_else(Repeat.UO. == "Yes" | Survival.30.day == "No" | Readmit. == "Yes", "Yes", "No"))
+freq_table <- catsrepeatproblems %>%
+  count(Any_Yes) %>%
+  mutate(Percentage = round(n / sum(n) * 100, 1))
+
+# Display the table
+kable(freq_table, col.names = c("Category", "Count", "Percentage (%)"), caption = "Figure 4: Cats vs. Problems")
+```
+
+Now, based on **Figure 5** below we can see that when cats do have one of these problems present around 35% of the time there is usually a change in the litter of cat. We also see that when a water change is present cats do not usually have a problem afterwards. This can be due to cats being able to flush out there system as Water Change looks for if the cats had access to cleaner water or more water was available to them. These signs can help the healing process of cats and lead to shorter recoveries and less frequent trips to the vet. 
+
+```{r echo=FALSE, fig.align='center'}
+
 
 # Filter data to include only cases where Any_Yes is "Yes"
 cat_data_yes <- catsrepeatproblems %>%
@@ -229,16 +249,25 @@ cat_data_yes <- catsrepeatproblems %>%
                               "Water.Change" = "Water Change"))
 
 # Create a bar chart for distribution of changes at home when Any_Yes is "Yes"
-ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
+plot5<-ggplot(cat_data_yes, aes(x = Change_Type, fill = Change_Present)) +
   geom_bar(position = "fill") +  # Normalize bars to show proportions
   labs(
     title = "Changes at Home vs. Problems are Present",
     x = "Type of Change at Home",
-    y = "Proportion of Cats Where Home Problem Present",
+    y = "Proportion of Cats Have Problem",
     fill = "Problem Present"
   ) +
   scale_y_continuous(labels = scales::percent_format()) +  # Show percentage
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+grid.arrange(plot5, ncol = 1, top = textGrob("Figure 5", 
+                            gp = gpar(fontsize = 12, fontface = "italic")))
 ```
 
+
+Overall, the four main recommendations we would make to the vet staff are:
+
+- Advise and strongly encourage cat owners to report any lingering or recurring urinary symptoms after initial treatment.
+- Provide clear discharge instructions on what symptoms require urgent follow-up, emphasizing that even mild changes could signal a problem.
+- Urge owners if possible to try and put their cats on a diet with both wet and dry foods incorporated.
+- Give cats more access to water such as more bowls, the ability to drink from the sink, and water being replaced more frequently.
