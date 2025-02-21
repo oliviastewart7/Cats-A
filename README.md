@@ -11,7 +11,7 @@ Urethral Obstruction (UO) is a life-threatening blockage of the lower portion of
 Project Goals
 1.      Find potential factors of reoccuring UO through exploratory statisitcs
 
-2.      Make recommendations to vet office staff to decrease chance of recurring UO
+2.      Make recommendations to vet office staff to decrease chance of recurring UO and give suggestions on how what to warn/advise cat owners about
 
 Dataset
 The dataset in this project contained information on 105 male cats who underwent a medical procedure to treat urethral obstruction (UO). The data was collected across multiple clinics, and contained many different variables related to the cat’s diet, environment, and health, as well as many variables related to the actual medical procedure. However, as the main goal of this analysis is to identify factors that veterinarian surgeons could actually change in order to decrease the likelihood of a cat redeveloping UO after the medical procedure, the analysis focused on examining the variables most directly under vet surgeons’ control. Most of these variables are related to the medical procedure or the cat’s health measurements. After cleaning the dataset, it contained information on 87 cats.
@@ -19,7 +19,7 @@ The dataset in this project contained information on 105 male cats who underwent
 Materials in "Cat Consulting" Folder
 ·         The "CatProjectHelp.RMD" file contains data wrangling suggestions, provided by Professor Matheson, and used in our data analysis. 
 
-·         The data analysis.Rmd contains code for our data wrangling and statisitcal analysis. 
+·         The data analysis copy.Rmd contains code for our data wrangling and statisitcal analysis. 
 
 ·         The dataset.xls file is the initial dataset provided by Professor Matheson. 
 
